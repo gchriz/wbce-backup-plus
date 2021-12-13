@@ -45,7 +45,7 @@ $log_excluded_large_files = true;
 $includeDirs = array('pages');
 
 // Specify database tables you WANT in the SQL export as an array for backup type "page"
-$exportTables = array('mod_wysiwyg','pages','sections');
+$exportTables = array('mod_wysiwyg','mod_menu_link','mod_sitemap','pages','sections');
 
 
 // -------------------- Excludes for backup type WBCE ---------------------------
