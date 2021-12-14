@@ -110,7 +110,12 @@ foreach ($files as $file) {
 	if (is_file($file)) {
 
 		$filepath = $file->getPathname();
-		$rootpath = substr(str_replace($source, '', $filepath),1);
+
+		if (substr($source,-1) == '/') {
+			$rootpath = str_replace($source, '', $filepath);
+		} else {
+			$rootpath = substr(str_replace($source, '', $filepath),1);
+		}
 
 		// Skip ignored directories if "wbce" backup
 		if ($_GET['type'] == 'wbce') {
