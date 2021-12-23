@@ -46,6 +46,7 @@ $MOD_BACKUP['BACKUP_WARNING2']			= '<br><br>Danach started das Hauptmenü, event
 
 $MOD_BACKUP['BACKUP_ZIP_ERROR']			= 'Zip-Fehler, Status: %s';
 $MOD_BACKUP['BACKUP_LOG_ERROR']			= 'Fehler beim Erstellen der Log-Datei!';
+$MOD_BACKUP['BACKUP_CREATE_DIR_ERROR']	= 'Fehler beim Erstellen des Verzeichnisses "%s"!';
 $MOD_BACKUP['BACKUP_CREATE_SQL_ERROR']	= 'Fehler beim Erstellen der SQL-Datei!';
 $MOD_BACKUP['BACKUP_DELETE_ZIP_ERROR']	= 'Fehler beim Löschen der Zip-Datei!';
 $MOD_BACKUP['BACKUP_DELETE_LOG_ERROR']	= 'Fehler beim Löschen der zugehörigen Logdatei!';

@@ -176,7 +176,8 @@ foreach ($files as $file) {
 		}
 
 		$entryFound = true;
-		$zip->addFile($filepath, $rootpath);
+		// replace windows backslash than the windows zip can be restored on linux
+		$zip->addFile($filepath, str_replace("\\", "/", $rootpath));
 	}
 }
 
@@ -208,14 +209,31 @@ if ($res === false) {
  -------------------------------------------------------------------------------
 **/
 
+$dbVersion = "";
+$dbOS = "";
+
+$query = "SHOW VARIABLES WHERE variable_name LIKE '%version%'";
+$result = $database->query($query);
+if ($database->is_error()) {
+	die(json_encode(array('code' => 4090, 'error' => $database->get_error())));
+}
+
+while ($row = $result->fetchRow(MYSQLI_ASSOC)) {
+	if ($row['Variable_name'] == 'version') 			$dbVersion = $row['Value'];
+	if ($row['Variable_name'] == 'version_compile_os')	$dbOS = $row['Value'];
+}
+
 // create pre comment for documentation
- $output = ''.PHP_EOL.
+$output = ''.PHP_EOL.
 	'# '.PHP_EOL.
 	'# Database Backup'.PHP_EOL.
 	'# '.$_SERVER['HTTP_HOST'].PHP_EOL.
 	'# '.gmdate(DATE_FORMAT, time()+TIMEZONE).', '.gmdate(TIME_FORMAT, time()+TIMEZONE).PHP_EOL.
-	'# Backup modul version: '.$module_version.PHP_EOL.
-	'# '.PHP_EOL.PHP_EOL;
+	'# Backup modul version: '.$module_version.PHP_EOL;
+
+if ($dbVersion <> "")	$output .= '# Database: ' .$dbVersion.PHP_EOL;
+if ($dbOS <> "")		$output .= '# OS: '.$dbOS.PHP_EOL;
+$output .= '# '.PHP_EOL.PHP_EOL;
 
 /**
  *	Get table names

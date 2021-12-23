@@ -44,14 +44,22 @@ $log->write('Restore started');
 // get backup type
 preg_match('#(\d{10}).(.)#', $_GET['file'], $matches);
 
-// if restore of a pageBackup: delete all files in pages directories first
+// if restore of a pageBackup: delete all files in pages directories first or create directory
 if ($matches[2] == 'p') {
 
 	foreach($includeDirs as $dir) {
-		if (cleanDir($dir) == false) {
-			abort(array('code' => 4032, 'error' => sprintf($MOD_BACKUP['BACKUP_DELETE_PAGE_ERROR'],$dir)));
+		if (!is_Dir($dir)) {
+			if (mkdir($dir, 0705, true) === false) {
+				abort(array('code' => 4031, 'error' => sprintf($MOD_BACKUP['BACKUP_CREATE_DIR_ERROR'],$dir)));
+			} else {
+				$log->write( sprintf('Restore directory "%s" created',$dir));
+			}
+		} else {
+			if (cleanDir($dir) == false) {
+				abort(array('code' => 4032, 'error' => sprintf($MOD_BACKUP['BACKUP_DELETE_PAGE_ERROR'],$dir)));
+			}
+			$log->write( sprintf('Restore directory "%s" cleaned',$dir));
 		}
-		$log->write( sprintf('Restore directory "%s" cleaned',$dir));
 	}
 }
 

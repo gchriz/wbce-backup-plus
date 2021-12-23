@@ -46,6 +46,7 @@ $MOD_BACKUP['BACKUP_WARNING2']			= '<br><br>When the function is finished, the m
 
 $MOD_BACKUP['BACKUP_ZIP_ERROR']			= 'Zip-Error, Status: %s';
 $MOD_BACKUP['BACKUP_LOG_ERROR']			= 'Error creating logfile!';
+$MOD_BACKUP['BACKUP_CREATE_DIR_ERROR']	= 'Error creating directory "%s"!';
 $MOD_BACKUP['BACKUP_CREATE_SQL_ERROR']	= 'Error creating SQL exportfile!';
 $MOD_BACKUP['BACKUP_DELETE_ZIP_ERROR']	= 'Error deleting zipfile!';
 $MOD_BACKUP['BACKUP_DELETE_LOG_ERROR']	= 'Error deleting logfile!';
