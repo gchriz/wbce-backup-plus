@@ -13,7 +13,7 @@
 $module_directory = 'backup_plus';
 $module_name = 'Backup Plus';
 $module_function = 'tool';
-$module_version = '2.7.0';
+$module_version = '2.7.1';
 $module_platform = '1.5.x';
 $module_author = 'misc., Ruud, webbird, freesbee, mastermind';
 $module_license = 'GNU General Public License';
