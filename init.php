@@ -61,7 +61,7 @@ class BKU_FilePrefix
 	public function __construct($dir_path,$type)
 	{
 		// Backup file name starts with domain name ...
-		$host = str_replace(':','_',($_SERVER['HTTP_HOST'])).'_';
+		$host = str_replace(':','_',$_SERVER['HTTP_HOST']).'_';
 
 		// ... then we add date string and the timestamp
 		$timestr = gmdate('Y-m-d', time() + TIMEZONE).'-'.time();
