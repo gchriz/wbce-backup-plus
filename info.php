@@ -13,9 +13,9 @@
 $module_directory = 'backup_plus';
 $module_name = 'Backup Plus';
 $module_function = 'tool';
-$module_version = '2.7.1';
+$module_version = '2.7.2';
 $module_platform = '1.5.x';
-$module_author = 'misc., Ruud, webbird, freesbee, mastermind';
+$module_author = 'misc., Ruud, webbird, freesbee, mastermind, chriz';
 $module_license = 'GNU General Public License';
 $module_description = 'This module allows you to backup your database and your files.';
 $module_icon = 'fa fa-download';
@@ -30,6 +30,8 @@ $module_icon = 'fa fa-download';
  *          replace windows dir separator by "/" for zip, so backup from windows can be restored on linux
  *          include DB Version and OS in sql export
  *          bug: do not include backup_settings.php into zip file for release
+ *
+ * 2.7.2    make sure to exclude full directory name only and not parts of it as well and fix some typos 
  * 
  */
 

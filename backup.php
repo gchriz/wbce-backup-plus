@@ -60,33 +60,35 @@ $log->write('Backup started - Version ' . $module_version);
 switch ($_GET['type']) {
 	case 'full':
 		$source = $_SERVER["DOCUMENT_ROOT"];
-		$log->write('This directories are NOT included in zipfile: '.implode(", ",$ignoreFullDirs));
+		$log->write('These directories are NOT included in zipfile: '.implode(", ",$ignoreFullDirs));
 		break;
 
 	case 'wbce':
 		$source = WB_PATH;
 
 		// Log ignored dirs
-		$log->write('This directories are NOT included in zipfile: '.implode(", ",$ignoreWbceDirs));
+		$log->write('These directories are NOT included in zipfile: '.implode(", ",$ignoreWbceDirs));
 		break;
 
 	case 'page':
 		$source = WB_PATH;
 
 		// Log included dirs
-		$log->write('This directories are included in zipfile: '.implode(", ",$includeDirs));
+		$log->write('These directories are included in zipfile: '.implode(", ",$includeDirs));
 		break;
 
 	default:	die(json_encode(array('code' => 4032, 'error' => 'invalid Parameter "type"')));
 }
 
+$log->write('Source directory: '.$source);
+
 if (count($ignoreExts) > 0) {
-	$log->write('File with this extensions are ignored: '.implode(", ",$ignoreExts));
+	$log->write('File with these extensions are ignored: '.implode(", ",$ignoreExts));
 }
 
-if (!extension_loaded('zip')) 		die(json_encode(array('code' => 4032, 'error' => "PHP Zip extension not found!")));
-if (!file_exists($source)) 			die(json_encode(array('code' => 4033, 'error' => "Zip creation source invalid!")));
-if (!is_dir($source)) 				die(json_encode(array('code' => 4034, 'error' => "Zip creation source invalid!")));
+if (!extension_loaded('zip')) 	die(json_encode(array('code' => 4032, 'error' => "PHP Zip extension not found!")));
+if (!file_exists($source)) 	die(json_encode(array('code' => 4033, 'error' => "Zip creation source invalid!")));
+if (!is_dir($source)) 		die(json_encode(array('code' => 4034, 'error' => "Zip creation source invalid!")));
 
 $entryFound = false;
 $zipfile = $pfx->get().'.zip';
@@ -120,11 +122,21 @@ foreach ($files as $file) {
 		// Skip ignored directories if "wbce" backup
 		if ($_GET['type'] == 'wbce') {
 			foreach ($ignoreWbceDirs as $exclude) {
-				$exclude = $exclude.DIRECTORY_SEPARATOR;
-				if (strpos($rootpath, $exclude) !== false || $rootpath == $exclude) {
-					$continue = true;
-					break;
-				}
+                                // make sure to exclude full directory name only and not parts of it as well!
+                                // (since it should run with PHP 7 too, we can't use str_starts_with())
+                                // (perhaps preg_match() would fit here...)
+                                //
+                                // 1.) dir/ as first part of path
+                                // 2.) /dir/ somewhere in path (note leading slash)
+                                // 3.) but what is that 3rd thing for? 
+
+                                if (strpos($rootpath, $exclude.DIRECTORY_SEPARATOR) === 0 ||
+                                    strpos($rootpath, DIRECTORY_SEPARATOR.$exclude.DIRECTORY_SEPARATOR) !== false ||
+                                    $rootpath == $exclude) {
+					$log->write('Excluded: '.$rootpath);
+                                        $continue = true;
+                                        break;
+                                }
 			}
 			if ($continue) continue;
 		}
@@ -132,11 +144,21 @@ foreach ($files as $file) {
 		// Skip ignored directories if "full" backup
 		if ($_GET['type'] == 'full') {
 			foreach ($ignoreFullDirs as $exclude) {
-				$exclude = $exclude.DIRECTORY_SEPARATOR;
-				if (strpos($rootpath, $exclude) !== false || $rootpath == $exclude) {
-					$continue = true;
-					break;
-				}
+                                // make sure to exclude full directory name only and not parts of it as well!
+                                // (since it should run with PHP 7 too, we can't use str_starts_with())
+                                // (perhaps preg_match() would fit here...)
+                                //
+                                // 1.) dir/ as first part of path
+                                // 2.) /dir/ somewhere in path (note leading slash)
+                                // 3.) but what is that 3rd thing for? 
+
+                                if (strpos($rootpath, $exclude.DIRECTORY_SEPARATOR) === 0 ||
+                                    strpos($rootpath, DIRECTORY_SEPARATOR.$exclude.DIRECTORY_SEPARATOR) !== false ||
+                                    $rootpath == $exclude) {
+					$log->write('Excluded: '.$rootpath);
+                                        $continue = true;
+                                        break;
+                                }
 			}
 			if ($continue) continue;
 		}
@@ -145,7 +167,9 @@ foreach ($files as $file) {
 		if ($_GET['type'] == 'page') {
 
 			foreach ($includeDirs as $include) {
+				// that's superfluous  ;-)
 				$include = $include;
+				// same problem here as above: $include might be PART of a directory or filename!
 				if (strpos($rootpath, $include) === 0) {
 					// found - addFile
 				} else {
@@ -176,12 +200,12 @@ foreach ($files as $file) {
 		}
 
 		$entryFound = true;
-		// replace windows backslash than the windows zip can be restored on linux
+		// replace windows backslash - the windows zip can be restored on linux then
 		$zip->addFile($filepath, str_replace("\\", "/", $rootpath));
 	}
 }
 
-// if any file found
+// any file found?
 if ($entryFound === false) {
 	$log->write( $TEXT['NONE_FOUND']);
 	die(json_encode(array('code' => 4034, 'error' => $TEXT['NONE_FOUND'])));
@@ -219,7 +243,7 @@ if ($database->is_error()) {
 }
 
 while ($row = $result->fetchRow(MYSQLI_ASSOC)) {
-	if ($row['Variable_name'] == 'version') 			$dbVersion = $row['Value'];
+	if ($row['Variable_name'] == 'version') 		$dbVersion = $row['Value'];
 	if ($row['Variable_name'] == 'version_compile_os')	$dbOS = $row['Value'];
 }
 
@@ -232,12 +256,12 @@ $output = ''.PHP_EOL.
 	'# Backup modul version: '.$module_version.PHP_EOL;
 
 if ($dbVersion <> "")	$output .= '# Database: ' .$dbVersion.PHP_EOL;
-if ($dbOS <> "")		$output .= '# OS: '.$dbOS.PHP_EOL;
+if ($dbOS <> "")	$output .= '# OS: '.$dbOS.PHP_EOL;
 $output .= '# '.PHP_EOL.PHP_EOL;
 
 /**
  *	Get table names
- *	Use this one for aLL tables in DB
+ *	Use this one for all tables in DB
  *
  */
 $query = "SHOW TABLES";
@@ -254,7 +278,7 @@ if ($_GET['type'] == 'page') {
 	foreach( $exportTables as &$tab) {
 		$tab = TABLE_PREFIX.$tab;
 	}
-	$log->write('Only this tables are included in the SQL export: '.implode(", ",$exportTables));
+	$log->write('Only these tables are included in the SQL export: '.implode(", ",$exportTables));
 }
 
 $result = $database->query($query);
@@ -303,7 +327,7 @@ while ($row = $result->fetchRow()) {
 	$sql_code = '';
 
 	/**
-	 *	Loop through all collumns
+	 *	Loop through all columns
 	 *
 	 */
 	while ($code = $out->fetchRow(MYSQLI_ASSOC)) {
