@@ -25,6 +25,8 @@
 }
 #backup_plus_main #backup {
 	width: 100%;
+  background-color: #000;
+  color: #fff;
 }
 #backup_plus_main #left {
 	float: left;
@@ -52,6 +54,7 @@
 	background-color: #CCFFCC;
 	border: 1px solid #0c0;
 	padding: 5px;
+  text-align: center;
 }
 #backup_plus_main .alert-fail {
 	display: none;

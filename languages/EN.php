@@ -17,10 +17,11 @@ $module_description = 'This module allows you to backup your files and databases
 
 // Text outputs
 $MOD_BACKUP['BACKUP_HEADER'] 	  		= 'BACKUP';
-$MOD_BACKUP['BACKUP_COMPLETE'] 	  		= 'Complete backup - all files and the complete database';
+$MOD_BACKUP['BACKUP_COMPLETE'] 	  		= 'Complete backup - all files and the complete database<br>Access rights for all databases necessary!';
 $MOD_BACKUP['BACKUP_WBCE'] 	  			= 'CMS Backup - Only CMS files and the CMS database';
 $MOD_BACKUP['BACKUP_PAGES'] 	  		= 'Backup all created pages';
-$MOD_BACKUP['BACKUP_INFO']				= 'The backup of all directories and files may take a while. It depends on the number of modules and templates installed and the size of media files.<br>Only files up to max. %s MB will be included in the backup.';
+$MOD_BACKUP['BACKUP_INFO']				= 'The backup of all directories and files may take a while. It depends on the number of modules and templates installed and the size of media files.'
+                                        . '<br>Only files up to max. %s MB will be included in the backup.<br>Files starting with a dot are NOT saved!';
 $MOD_BACKUP['BACKUP_START'] 	  		= 'Start selected backup';
 
 $MOD_BACKUP['BACKUP_LIST_TITLE']		= 'History and functions';

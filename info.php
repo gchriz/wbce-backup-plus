@@ -13,7 +13,7 @@
 $module_directory = 'backup_plus';
 $module_name = 'Backup Plus';
 $module_function = 'tool';
-$module_version = '2.7.2';
+$module_version = '2.8.0';
 $module_platform = '1.5.x';
 $module_author = 'misc., Ruud, webbird, freesbee, mastermind, chriz';
 $module_license = 'GNU General Public License';
@@ -32,6 +32,15 @@ $module_icon = 'fa fa-download';
  *          bug: do not include backup_settings.php into zip file for release
  *
  * 2.7.2    make sure to exclude full directory name only and not parts of it as well and fix some typos 
+ * 
+ * 2.8.0    bug corrected: make sure to exclude full directory name only and not parts of it as well!
+ *          bug corrected: missing wb_path for creating and cleaning pages directory
+ *          write number of files saved in logfile
+ *          write excluded directories in logfile
+ *          some text in english version corrected
+ *          info for full backup: must have access rights
+ *          better button styling
+ *          delete text improved
  * 
  */
 

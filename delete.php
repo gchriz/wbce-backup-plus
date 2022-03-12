@@ -59,4 +59,25 @@ if (count($error) > 0) {
 	die(json_encode(array('code' => 403, 'error' => $error_msg)));
 }
 
-die(json_encode(array('code' => 200, 'error' => '', 'message' => $TEXT['DELETED'])));
+// Date time of backup
+preg_match('#(\d{10}).(.)#', $logfile, $matches);
+if (empty($matches[1])) {
+	$datetime = "?";
+} else {
+	$datetime = gmdate(DEFAULT_DATE_FORMAT.', '.DEFAULT_TIME_FORMAT.':s', $matches[1] + DEFAULT_TIMEZONE);
+}
+
+// get backup type
+if ($matches[2] == 'f') {
+	$name = $MOD_BACKUP['BACKUP_LIST_FULL'];
+} elseif ($matches[2] == 'w') {
+	$name = $MOD_BACKUP['BACKUP_LIST_WBCE'];
+} elseif ($matches[2] == 'p') {
+	$name = $MOD_BACKUP['BACKUP_LIST_PAGE'];
+} elseif ($matches[2] == 'r') {
+	$name = $MOD_BACKUP['BACKUP_LIST_RECO'];
+} else {
+	$name = "?";
+}
+
+die(json_encode(array('code' => 200, 'error' => '', 'message' => "$name $datetime - ".$TEXT['DELETED'])));

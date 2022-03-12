@@ -90,7 +90,7 @@ if (!extension_loaded('zip')) 	die(json_encode(array('code' => 4032, 'error' => 
 if (!file_exists($source)) 	die(json_encode(array('code' => 4033, 'error' => "Zip creation source invalid!")));
 if (!is_dir($source)) 		die(json_encode(array('code' => 4034, 'error' => "Zip creation source invalid!")));
 
-$entryFound = false;
+$cFilesSaved = 0;
 $zipfile = $pfx->get().'.zip';
 
 // Instantiate native php class ZipArchive
@@ -104,109 +104,97 @@ if ($res !== true) {
 $iterator = new RecursiveDirectoryIterator($source);
 // skip dot files while iterating
 $iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
-$files = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
+$files = new RecursiveIteratorIterator($iterator);
 
 foreach ($files as $file) {
 
 	$continue = false;
-	if (is_file($file)) {
+	$filepath = $file->getPathname();
 
-		$filepath = $file->getPathname();
-
-		if (substr($source,-1) == '/') {
-			$rootpath = str_replace($source, '', $filepath);
-		} else {
-			$rootpath = substr(str_replace($source, '', $filepath),1);
-		}
-
-		// Skip ignored directories if "wbce" backup
-		if ($_GET['type'] == 'wbce') {
-			foreach ($ignoreWbceDirs as $exclude) {
-                                // make sure to exclude full directory name only and not parts of it as well!
-                                // (since it should run with PHP 7 too, we can't use str_starts_with())
-                                // (perhaps preg_match() would fit here...)
-                                //
-                                // 1.) dir/ as first part of path
-                                // 2.) /dir/ somewhere in path (note leading slash)
-                                // 3.) but what is that 3rd thing for? 
-
-                                if (strpos($rootpath, $exclude.DIRECTORY_SEPARATOR) === 0 ||
-                                    strpos($rootpath, DIRECTORY_SEPARATOR.$exclude.DIRECTORY_SEPARATOR) !== false ||
-                                    $rootpath == $exclude) {
-					$log->write('Excluded: '.$rootpath);
-                                        $continue = true;
-                                        break;
-                                }
-			}
-			if ($continue) continue;
-		}
-
-		// Skip ignored directories if "full" backup
-		if ($_GET['type'] == 'full') {
-			foreach ($ignoreFullDirs as $exclude) {
-                                // make sure to exclude full directory name only and not parts of it as well!
-                                // (since it should run with PHP 7 too, we can't use str_starts_with())
-                                // (perhaps preg_match() would fit here...)
-                                //
-                                // 1.) dir/ as first part of path
-                                // 2.) /dir/ somewhere in path (note leading slash)
-                                // 3.) but what is that 3rd thing for? 
-
-                                if (strpos($rootpath, $exclude.DIRECTORY_SEPARATOR) === 0 ||
-                                    strpos($rootpath, DIRECTORY_SEPARATOR.$exclude.DIRECTORY_SEPARATOR) !== false ||
-                                    $rootpath == $exclude) {
-					$log->write('Excluded: '.$rootpath);
-                                        $continue = true;
-                                        break;
-                                }
-			}
-			if ($continue) continue;
-		}
-
-		// Include directory only if "page" backup
-		if ($_GET['type'] == 'page') {
-
-			foreach ($includeDirs as $include) {
-				// that's superfluous  ;-)
-				$include = $include;
-				// same problem here as above: $include might be PART of a directory or filename!
-				if (strpos($rootpath, $include) === 0) {
-					// found - addFile
-				} else {
-					$continue = true;
-					break;
-				}
-			}
-			if ($continue) continue;
-		}
-
-		// Skip not allowed extensions
-		if (count($ignoreExts) > 0) {
-			$ext = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
-			if (in_array($ext, $ignoreExts)) {
-				continue;
-			}
-		}
-
-		// Skip large files
-		if (is_int($max_file_size)) {
-			$max_size_mb = $max_file_size * 1000 * 1000; // MB
-			if (filesize($filepath) > $max_size_mb) {
-				if ($log_excluded_large_files) {
-					$log->write( sprintf('File "%s" skipped, max file size exceeded', $rootpath));
-				}
-				continue;
-			}
-		}
-
-		$entryFound = true;
-		// replace windows backslash - the windows zip can be restored on linux then
-		$zip->addFile($filepath, str_replace("\\", "/", $rootpath));
+	if (substr($source,-1) == '/') {
+		$rootpath = str_replace($source, '', $filepath);
+	} else {
+		$rootpath = substr(str_replace($source, '', $filepath),1);
 	}
+
+	// Skip ignored directories if "wbce" backup
+	if ($_GET['type'] == 'wbce') {
+		foreach ($ignoreWbceDirs as $exclude) {
+			// make sure to exclude full directory name only and not parts of it as well!
+			// (since it should run with PHP 7 too, we can't use str_starts_with())
+			// (perhaps preg_match() would fit here...)
+			//
+			// 1.) dir/ as first part of path
+			// 2.) /dir/ somewhere in path (note leading slash)
+
+			if (strpos($rootpath, $exclude.DIRECTORY_SEPARATOR) === 0 || strpos($rootpath, DIRECTORY_SEPARATOR.$exclude.DIRECTORY_SEPARATOR) !== false) {
+				$log->write('Excluded: '.$rootpath);
+				$continue = true;
+				break;
+			}
+		}
+		if ($continue) continue;
+	}
+
+	// Skip ignored directories if "full" backup
+	if ($_GET['type'] == 'full') {
+		foreach ($ignoreFullDirs as $exclude) {
+			// make sure to exclude full directory name only and not parts of it as well!
+			// (since it should run with PHP 7 too, we can't use str_starts_with())
+			// (perhaps preg_match() would fit here...)
+			//
+			// 1.) dir/ as first part of path
+			// 2.) /dir/ somewhere in path (note leading slash)
+
+			if (strpos($rootpath, $exclude.DIRECTORY_SEPARATOR) === 0 || strpos($rootpath, DIRECTORY_SEPARATOR.$exclude.DIRECTORY_SEPARATOR) !== false) {
+				$log->write('Excluded: '.$rootpath);
+				$continue = true;
+				break;
+			}
+		}
+		if ($continue) continue;
+	}
+
+	// Include directory only if "page" backup
+	if ($_GET['type'] == 'page') {
+		foreach ($includeDirs as $include) {
+			// do NOT backup "modules/pages" - only root directories
+			if (strpos($rootpath, $include.DIRECTORY_SEPARATOR) === 0) {
+				// found - addFile
+			} else {
+				$continue = true;
+				break;
+			}
+		}
+		if ($continue) continue;
+	}
+
+	// Skip not allowed extensions
+	if (count($ignoreExts) > 0) {
+		$ext = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
+		if (in_array($ext, $ignoreExts)) {
+			continue;
+		}
+	}
+
+	// Skip large files
+	if (is_int($max_file_size)) {
+		$max_size_mb = $max_file_size * 1000 * 1000; // MB
+		if (filesize($filepath) > $max_size_mb) {
+			if ($log_excluded_large_files) {
+				$log->write( sprintf('File "%s" skipped, max file size exceeded', $rootpath));
+			}
+			continue;
+		}
+	}
+
+	++$cFilesSaved;
+	// replace windows backslash - the windows zip can be restored on linux then
+	$zip->addFile($filepath, str_replace("\\", "/", $rootpath));
 }
 
 // any file found?
-if ($entryFound === false) {
+if ($cFilesSaved == 0) {
 	$log->write( $TEXT['NONE_FOUND']);
 	die(json_encode(array('code' => 4034, 'error' => $TEXT['NONE_FOUND'])));
 }
@@ -221,6 +209,7 @@ if ($res === false) {
 } else {
 
 	// this must be the last entry in the logfile: this is checked by list.php
+	$log->write(sprintf('Files saved: '.$cFilesSaved.PHP_EOL));
 	$log->write(sprintf('Zipfile for backup type "%s" finished successfully'.PHP_EOL,$_GET['type']));
 }
 

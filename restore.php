@@ -48,17 +48,18 @@ preg_match('#(\d{10}).(.)#', $_GET['file'], $matches);
 if ($matches[2] == 'p') {
 
 	foreach($includeDirs as $dir) {
-		if (!is_Dir($dir)) {
-			if (mkdir($dir, 0705, true) === false) {
-				abort(array('code' => 4031, 'error' => sprintf($MOD_BACKUP['BACKUP_CREATE_DIR_ERROR'],$dir)));
+		$fulldir = WB_PATH.DIRECTORY_SEPARATOR.$dir;
+		if (!is_Dir($fulldir)) {
+			if (mkdir($fulldir, 0705, true) === false) {
+				abort(array('code' => 4031, 'error' => sprintf($MOD_BACKUP['BACKUP_CREATE_DIR_ERROR'],$fulldir)));
 			} else {
-				$log->write( sprintf('Restore directory "%s" created',$dir));
+				$log->write( sprintf('Restore directory "%s" created',$fulldir));
 			}
 		} else {
-			if (cleanDir($dir) == false) {
-				abort(array('code' => 4032, 'error' => sprintf($MOD_BACKUP['BACKUP_DELETE_PAGE_ERROR'],$dir)));
+			if (cleanDir($fulldir) == false) {
+				abort(array('code' => 4032, 'error' => sprintf($MOD_BACKUP['BACKUP_DELETE_PAGE_ERROR'],$fulldir)));
 			}
-			$log->write( sprintf('Restore directory "%s" cleaned',$dir));
+			$log->write( sprintf('Restore directory "%s" cleaned',$fulldir));
 		}
 	}
 }
@@ -121,9 +122,6 @@ abort(array('code' => 200, 'error' => '', 'message' => sprintf($MOD_BACKUP['BACK
 /*****************************************************************************************************/
 
 function cleanDir($dir) {
-
-	$dir = WB_PATH.DIRECTORY_SEPARATOR.$dir;
-
 	$iterator = new RecursiveDirectoryIterator($dir);
 	// skip dot files while iterating
 	$iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
