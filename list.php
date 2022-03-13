@@ -166,11 +166,13 @@ function incompleteBackup($logfile, $type) {
 			$dir_path = dirname($logfile);
 			$temp_zipfile = scan_current_dir($dir_path, $search);
 
-			// Delete the sql and the eventually the temporary zip file
+			// Delete the temporary zip and sql file
 			if (!empty($temp_zipfile['filename'])) {
 				unlink($dir_path.DIRECTORY_SEPARATOR.$temp_zipfile['filename'][0]);
 				$sqlfile = str_replace('.log', '.sql', $logfile);
-				unlink($sqlfile);
+				if (file_exists($sqlfile)) {
+					unlink($sqlfile);
+				}
 			}
 		}
 		return false;
