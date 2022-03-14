@@ -181,7 +181,7 @@ foreach ($files as $file) {
 		$ext = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
 		if (in_array($ext, $ignoreExts)) {
 			if ($log_excluded_extensions) {
-				$log->write( sprintf('Excluded:  File "%s" has a not-allowed extension', $rootpath));
+				$log->write( sprintf('Excluded: File "%s" has a not-allowed extension', $rootpath));
 			}
 			continue;
 		}
@@ -200,7 +200,7 @@ foreach ($files as $file) {
 
 	// Skip unreadable files (e.g. wrong permission)
 	if (! is_readable($file)) {
-		$log->write( sprintf('Skipped:  File "%s" is not readable', $rootpath));
+		$log->write( sprintf('Skipped: File "%s" is not readable', $rootpath));
 		continue;
 	}
 

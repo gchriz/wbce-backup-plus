@@ -35,8 +35,11 @@ $module_icon = 'fa fa-download';
  * 
  * 2.8.0    bug corrected: make sure to exclude full directory name only and not parts of it as well!
  *          bug corrected: missing wb_path for creating and cleaning pages directory
+ *          bug corrected: skip file if not readable
+ *          bug corrected: on incomplete backup > test if sql file exists before trying to delete
  *          write number of files saved in logfile
  *          write excluded directories in logfile
+ *          skip files with not allowed extension (i.e. links)
  *          some text in english version corrected
  *          info for full backup: must have access rights
  *          better button styling
