@@ -39,6 +39,9 @@ $max_file_size = 60;
 // Log excluded large files
 $log_excluded_large_files = true;
 
+// Log excluded files with ignored extension
+$log_excluded_extensions = true;
+
 
 // -------------------- Includes for backup type PAGE ---------------------------
 // Specify directories you WANT in the backup as an array for backup type "page"

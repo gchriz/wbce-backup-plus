@@ -21,7 +21,7 @@ $MOD_BACKUP['BACKUP_COMPLETE'] 	  		= 'Gesamtsicherung - Alle Daten und die gesa
 $MOD_BACKUP['BACKUP_WBCE'] 	  			= 'CMS Sicherung - Nur CMS Daten und die CMS Datenbank';
 $MOD_BACKUP['BACKUP_PAGES'] 	  		= 'Alle erstellten Seiten sichern';
 $MOD_BACKUP['BACKUP_INFO']				= 'Die Sicherung aller Verzeichnisse und Dateien kann je nach Umfang der installierten Module und Templates sowie der Anzahl Mediendateien lange dauern.'
-                                        . '<br>Es werden nur Dateien bis max. %s MB ins Backup aufgenommen.<br>Dateien, die mit einem Punkt beginnen, werden NICHT gesichert!';
+                                        . '<br>Es werden nur Dateien bis max. %s MB ins Backup aufgenommen.<br>Leere Verzeichnisse werden nicht gesichert. Links auf Verzeichnisse wird nicht gefolgt!';
 $MOD_BACKUP['BACKUP_START'] 	  		= 'Ausgewählte Sicherung starten';
 
 $MOD_BACKUP['BACKUP_LIST_TITLE']		= 'Historie und Funktionen';

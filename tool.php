@@ -49,6 +49,10 @@ if (empty($log_excluded_large_files)) {
 	$log_excluded_large_files = true;
 }
 
+if (empty($log_excluded_extensions)) {
+	$log_excluded_extensions = true;
+}
+
 if (empty($ignoreExts))	{
 	$ignoreExts = array();
 }
