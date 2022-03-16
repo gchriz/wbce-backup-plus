@@ -200,7 +200,7 @@ foreach ($files as $file) {
 
 	// Skip unreadable files (e.g. wrong permission)
 	if (! is_readable($file)) {
-		$log->write( sprintf('Skipped: File "%s" is not readable', $rootpath));
+		$log->write( sprintf('Skipped:  File "%s" is not readable', $rootpath));
 		continue;
 	}
 
