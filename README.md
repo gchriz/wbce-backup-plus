@@ -16,14 +16,3 @@ Some links:
 * [Discussion forum for Backup Plus](https://forum.wbce.org/viewtopic.php?id=4374)
 
 
----
-
-**Note:**
-
-Currently this is not an/the official repository for *Backup Plus*.
-
-It's just my (gchriz) personal workspace,
-initially created from the historic versions
-found in the above discussion forum and now "live", at least for myself.  ;-)
-
-The tags here are on par with the published versions in AOR.
