@@ -24,3 +24,34 @@ Links to *Backup Plus* in gchriz' Github repository:
 * [latest release version (overview page with download links)](https://github.com/gchriz/wbce-backup-plus/releases/latest)
 * [current development version (.zip file)](https://github.com/gchriz/wbce-backup-plus/archive/refs/heads/main.zip)
 
+---
+
+**Please note:** Currently the zip downloads from Github are unfortunately
+not directly installable in *WBCE* because they contain an additional root directory:
+
+e.g. the file *wbce-backup-plus-2.8.0.zip*
+contains this directory structure
+
+```text
+wbce-backup-plus-2.8.0/
+    css/
+    js/
+    languages/
+    backup_settings.default.php
+    backup.php
+    ...
+```
+
+So you need to unzip it first and re-zip the inner contents (css/, js/ etc.)
+into a fresh zip file so it looks like:
+
+```text
+css/
+js/
+languages/
+backup_settings.default.php
+backup.php
+...
+```
+
+I'll try to find a better solution...
