@@ -200,7 +200,7 @@ foreach ($files as $file) {
 
 	// Skip unreadable files (e.g. wrong permission)
 	if (! is_readable($file)) {
-		$log->write( sprintf('Skipped:  File "%s" is not readable', $rootpath));
+		$log->write( sprintf('Skipped: File "%s" is not readable', $rootpath));
 		continue;
 	}
 
@@ -339,7 +339,12 @@ while ($row = $result->fetchRow()) {
 		$sql_code .= "INSERT INTO `".$row[0]."` SET ";
 
 		foreach ($code as $insert => $value) {
-			$sql_code .= "`".$insert ."`='".addslashes($value)."',";
+			if ($value!==null) {
+				$ValueToInsert = addslashes($value);
+			} else {
+				$ValueToInsert = '';
+			}
+			$sql_code .= "`".$insert ."`='".$ValueToInsert."',";
 		}
 		$sql_code = substr($sql_code, 0, -1);
 		$sql_code.= ";".PHP_EOL;
