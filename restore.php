@@ -106,14 +106,35 @@ if ($sql === false) {
 	abort(array('code' => 4035, 'error' => $MOD_BACKUP['BACKUP_READ_SQL_ERROR']));
 }
 
+// Since the multi_query() below is processed asynchronously the logging lines need to be changed a bit:
+$log->write( sprintf('Restore SQL dump "%s" should have finished successfully if there are no error messages following after the next line...', $sqlfile));
+// otherwise the following line is misleading if an error occurs. But list.php checks (only) for this string at EOF!
+$log->write('Restore finished successfully');
+
 // execute multi query
 $db = $database->__get('db_handle');
+
+// Possibly this might help too???:
+// mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 if (!($db->multi_query($sql))) {
-	abort(array('code' => 4036, 'error' => print_r($db->error,true)));
+	$log->write($db->errno . " - " . print_r($db->error,true));
+	abort(array('code' => 4036, 'error' => $db->errno . " - " . print_r($db->error,true)));
 }
 
-$log->write( sprintf('Restore SQL dump "%s" sucessfull', $sqlfile));
-$log->write('Restore finished successfully');
+do {
+	$db->next_result();
+    // This shows the internal steps within multi_query().
+    // Unfortunately without detailed data available.
+	//$log->write('.');
+
+} while ($db->more_results());
+
+if ($db->error) {
+	$log->write($db->errno . " - " . print_r($db->error,true));
+	abort(array('code' => 4036, 'error' => $db->errno . " - " . print_r($db->error,true)));
+}
+
 $log->close();
 
 abort(array('code' => 200, 'error' => '', 'message' => sprintf($MOD_BACKUP['BACKUP_RESTORED'])));
@@ -147,7 +168,7 @@ function abort($status) {
 	} else {
 		$s = 'result=false&error=' . urlencode($status["error"].'<br>Code: '.$status["code"]);
 	}
-	if ($matches[2] == 'p') {
+	if (($matches[2] == 'p') || (! empty($status["error"]))) {
 		header("Location: " . ADMIN_URL . '/admintools/tool.php?tool=backup_plus&'.$s);
 	} else {
 		header("Location: " . ADMIN_URL . '/login/');
