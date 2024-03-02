@@ -13,7 +13,7 @@
 $module_directory = 'backup_plus';
 $module_name = 'Backup Plus';
 $module_function = 'tool';
-$module_version = '2.8.1';
+$module_version = '2.8.2';
 $module_platform = '1.5.x';
 $module_author = 'misc., Ruud, webbird, freesbee, mastermind, chriz';
 $module_license = 'GNU General Public License';
@@ -47,6 +47,8 @@ $module_icon = 'fa fa-download';
  * 
  * 2.8.1    (by florian) PHP 8.1 deprecated fix 
  *			small fixes to DE.php
+ *
+ * 2.8.2    (by chriz) fix restore to detect and show possible SQL errors
  *
  */
 
