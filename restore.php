@@ -78,9 +78,11 @@ if ($res !== true) {
 // extract it to the path we determined above
 if ($matches[2] == 'f') {
 	$zip->extractTo($_SERVER["DOCUMENT_ROOT"]);
+	$log->write( sprintf('Extracting zipfile "%s" to "%s"...', $zipfile, $_SERVER["DOCUMENT_ROOT"]));
 }
  else {
 	$zip->extractTo(WB_PATH);
+	$log->write( sprintf('Extracting zipfile "%s" to "%s"...', $zipfile, WB_PATH));
 }
 
 $res = $zip->close();
