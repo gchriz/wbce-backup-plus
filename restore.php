@@ -75,20 +75,41 @@ if ($res !== true) {
 	abort(array('code' => 4033, 'error' => sprintf($MOD_BACKUP['BACKUP_ZIP_ERROR'],$res)));
 }
 
-// extract it to the path we determined above
+// determine the path to extract to
 if ($matches[2] == 'f') {
-	$log->write( sprintf('Extracting zipfile "%s" to "%s"...', $zipfile, $_SERVER["DOCUMENT_ROOT"]));
-	$zip->extractTo($_SERVER["DOCUMENT_ROOT"]);
+	$zip_dest = $_SERVER["DOCUMENT_ROOT"];
+} else {
+	$zip_dest = WB_PATH;
 }
- else {
-	$log->write( sprintf('Extracting zipfile "%s" to "%s"...', $zipfile, WB_PATH));
-	$zip->extractTo(WB_PATH);
+
+$log->write( sprintf('Extracting zipfile "%s" to "%s"...', $zipfile, $zip_dest));
+
+// Originally: All at once, without any intermediate detection of failures!
+//$zip->extractTo($zip_dest);
+// Even this doesn't help for detecting errors...
+//$log->write( sprintf('Status: %s', $zip->getStatusString()));
+
+// New: File by file as found in user comments here: https://www.php.net/manual/en/ziparchive.extractto.php
+$ERROR_UNZIP = false;
+
+for ($i = 0; $i < $zip->numFiles; $i++) {
+	$RETVAL = false;
+	$filename = $zip->getNameIndex($i);
+	$RETVAL = $zip->extractTo($zip_dest,$filename);
+
+	if (! $RETVAL) {
+		$log->write( sprintf('ERROR on writing target file: %s', $filename) );
+		// but how to know details of failure?
+		$ERROR_UNZIP = true;
+	}
 }
 
 $res = $zip->close();
-if ($res === false) {
-	$log->write( sprintf($MOD_BACKUP['BACKUP_ZIP_ERROR'],$res));
-	abort(array('code' => 4034, 'error' => sprintf($MOD_BACKUP['BACKUP_ZIP_ERROR'],$res)));
+
+if ($res === false || $ERROR_UNZIP) {
+	$log->write(sprintf('ERROR unzipping zipfile %s', $zipfile));
+	$log->write( sprintf($MOD_BACKUP['BACKUP_ZIP_ERROR'], $res));
+	abort(array('code' => 4034, 'error' => sprintf($MOD_BACKUP['BACKUP_ZIP_ERROR'], $res)));
 } else {
 	$log->write( sprintf('Restore zipfile "%s" sucessfull', $zipfile));
 }
