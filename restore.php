@@ -106,10 +106,7 @@ if ($sql === false) {
 	abort(array('code' => 4035, 'error' => $MOD_BACKUP['BACKUP_READ_SQL_ERROR']));
 }
 
-// Since the multi_query() below is processed asynchronously the logging lines need to be changed a bit:
-$log->write( sprintf('Restore SQL dump "%s" should have finished successfully if there are no error messages following after the next line...', $sqlfile));
-// otherwise the following line is misleading if an error occurs. But list.php checks (only) for this string at EOF!
-$log->write('Restore finished successfully');
+$log->write( sprintf('Restoring SQL dump "%s" ...', $sqlfile));
 
 // execute multi query
 $db = $database->__get('db_handle');
@@ -126,7 +123,7 @@ do {
 	$db->next_result();
     // This shows the internal steps within multi_query().
     // Unfortunately without detailed data available.
-	//$log->write('.');
+    //$log->write('.');
 
 } while ($db->more_results());
 
@@ -135,6 +132,7 @@ if ($db->error) {
 	abort(array('code' => 4036, 'error' => $db->errno . " - " . print_r($db->error,true)));
 }
 
+$log->write('Restore finished successfully');
 $log->close();
 
 abort(array('code' => 200, 'error' => '', 'message' => sprintf($MOD_BACKUP['BACKUP_RESTORED'])));
