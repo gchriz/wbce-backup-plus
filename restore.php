@@ -25,6 +25,7 @@ if (!isset($_GET['file'])) {
  *
  */
 require_once('init.php');
+require_once('info.php');		// contains the $module_version
 
 /**
  -------------------------------------------------------------------------------
@@ -37,9 +38,9 @@ require_once('init.php');
 // Create the file name prefix
 $pfx = new BKU_FilePrefix(WB_PATH.BACKUP_DATA_DIR, "reco");
 
-// Start backup log
+// Start restore log
 $log = new BKU_Log($pfx->get());
-$log->write('Restore started');
+$log->write('Restore started - Version ' . $module_version);
 
 // get backup type
 preg_match('#(\d{10}).(.)#', $_GET['file'], $matches);
