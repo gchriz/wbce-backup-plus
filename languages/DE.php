@@ -17,11 +17,17 @@ $module_description = 'Dieses Modul ermöglicht die Erstellung einer Datenbanksi
 
 // Textausgaben
 $MOD_BACKUP['BACKUP_HEADER'] 	  		= 'DATENSICHERUNG';
-$MOD_BACKUP['BACKUP_COMPLETE'] 	  		= 'Gesamtsicherung - Alle Daten und die gesamte Datenbank<br>Die Rechte für alle Datenbanken sind dafür erforderlich!';
-$MOD_BACKUP['BACKUP_WBCE'] 	  			= 'CMS Sicherung - Nur CMS-Daten und die CMS-Datenbank';
-$MOD_BACKUP['BACKUP_PAGES'] 	  		= 'Alle erstellten Seiten sichern';
-$MOD_BACKUP['BACKUP_INFO']				= 'Die Sicherung aller Verzeichnisse und Dateien kann je nach Umfang der installierten Module und Templates sowie der Anzahl Mediendateien lange dauern.'
-                                        . '<br>Es werden nur Dateien bis max. %s MB ins Backup aufgenommen.<br>Leere Verzeichnisse werden nicht gesichert. Verzeichnis-Links wird nicht gefolgt!';
+$MOD_BACKUP['BACKUP_PAGES'] 	  		= 'Seiten - Alle erstellten Seiten';
+$MOD_BACKUP['BACKUP_WBCE'] 	  			= 'CMS - Dateien und Datenbanktabellen dieses CMS';
+$MOD_BACKUP['BACKUP_COMPLETE'] 	  		= 'Gesamt - Alle Dateien (DOCUMENT_ROOT) und die'
+    . '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gesamte Datenbank (Rechte für alle DB-Tabellen erforderlich!)';
+
+$MOD_BACKUP['BACKUP_INFO']				=
+      'Die Sicherung aller Verzeichnisse und Dateien kann je nach Umfang der installierten Module und Templates sowie der Anzahl Mediendateien lange dauern.'
+    . '<br>Es werden nur Dateien bis max. %s MB ins Backup aufgenommen.'
+    . '<br>Einige Verzeichnisse sind ausgenommen, siehe \'backup_settings.php\'.'
+    . '<br>Leere Verzeichnisse werden nicht gesichert. Verzeichnis-Links wird nicht gefolgt!';
+
 $MOD_BACKUP['BACKUP_START'] 	  		= 'Ausgewählte Sicherung starten';
 
 $MOD_BACKUP['BACKUP_LIST_TITLE']		= 'Historie und Funktionen';

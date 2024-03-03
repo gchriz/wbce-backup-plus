@@ -17,12 +17,17 @@ $module_description = 'This module allows you to backup your files and databases
 
 // Text outputs
 $MOD_BACKUP['BACKUP_HEADER'] 	  		= 'BACKUP';
-$MOD_BACKUP['BACKUP_COMPLETE'] 	  		= 'Complete backup - all files and the complete database<br>Access rights for all databases necessary!';
-$MOD_BACKUP['BACKUP_WBCE'] 	  			= 'CMS Backup - Only CMS files and the CMS database';
-$MOD_BACKUP['BACKUP_PAGES'] 	  		= 'Backup all created pages';
-$MOD_BACKUP['BACKUP_INFO']				= 'The backup of all directories and files may take a while. It depends on the number of modules and templates installed and the size of media files.'
-                                        . '<br>Only files up to max. %s MB will be included in the backup.'
-                                        . '<br>Empty directories won\'t be included. Links to directories won\'t be followed!';
+$MOD_BACKUP['BACKUP_PAGES'] 	  		= 'Pages - All created pages';
+$MOD_BACKUP['BACKUP_WBCE'] 	  			= 'CMS - Files and the database tables of this CMS';
+$MOD_BACKUP['BACKUP_COMPLETE'] 	  		= 'Complete - All files (DOCUMENT_ROOT) and the'
+   . '<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;complete database (Access rights for all DB tables necessary!)';
+
+$MOD_BACKUP['BACKUP_INFO']				=
+      'The backup of all directories and files may take a while. It depends on the number of modules and templates installed and the size of media files.'
+    . '<br>Only files up to max. %s MB will be included in the backup.'
+    . '<br>Some directories won\'t be included, have a look at \'backup_settings.php\'.'
+    . '<br>Empty directories won\'t be included. Links to directories won\'t be followed!';
+
 $MOD_BACKUP['BACKUP_START'] 	  		= 'Start selected backup';
 
 $MOD_BACKUP['BACKUP_LIST_TITLE']		= 'History and functions';
