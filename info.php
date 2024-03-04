@@ -48,7 +48,8 @@ $module_icon = 'fa fa-download';
  * 2.8.1    (by florian) PHP 8.1 deprecated fix 
  *			small fixes to DE.php
  *
- * 2.8.2    (by chriz) fix restore to detect and show possible SQL errors
+ * 2.8.2    (by chriz) bugfix: restore now detects and shows possible SQL and unzip errors
+ *          add some technical details to DE.php, EN.php and restore logs as background information
  *
  */
 
