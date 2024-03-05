@@ -356,6 +356,9 @@ while ($row = $result->fetchRow()) {
 	$output .= $sql_backup.$sql_code.PHP_EOL.PHP_EOL;
 }
 
+$output .= '# Enable foreign key check again';
+$output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=1;".PHP_EOL;
+
 /**
  *	Write sql file
  *
