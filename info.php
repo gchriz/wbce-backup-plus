@@ -49,7 +49,8 @@ $module_icon = 'fa fa-download';
  *			small fixes to DE.php
  *
  * 2.8.2    (by chriz) bugfix: restore now detects and shows possible SQL and unzip errors
- *          add some technical details to DE.php, EN.php and restore logs as background information
+ *          add some technical details as background information to DE.php, EN.php and to restore logs
+ *          turn off foreign key check in SQL file for restore 
  *
  */
 
