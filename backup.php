@@ -264,28 +264,8 @@ if ($dbVersion <> "")	$output .= '# Database: ' .$dbVersion.PHP_EOL;
 if ($dbOS <> "")	$output .= '# OS: '.$dbOS.PHP_EOL;
 $output .= '# '.PHP_EOL.PHP_EOL;
 
-
-if ($_GET['type'] !== 'page') {
-	$output .= '# This prolog is a workaround to avoid constraint errors without disabling the check completely.';
-	$query = "SELECT REFERENCED_TABLE_NAME FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE TABLE_NAME IN (SELECT DISTINCT TABLE_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_TYPE='FOREIGN KEY')";
-
-	if ($_GET['type'] == 'wbce') {
-		// ONLY for relevant wbce tables
-		$prefix = str_replace('_', '\_', TABLE_PREFIX);
-		$query = "SELECT REFERENCED_TABLE_NAME FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE TABLE_NAME IN (SELECT DISTINCT TABLE_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_TYPE='FOREIGN KEY' AND TABLE_NAME LIKE '".$prefix."%')";
-	}
-
-	$result = $database->query($query);
-	if ($database->is_error()) {
-		die(json_encode(array('code' => 4036, 'error' => $database->get_error())));
-	}
-
-	$output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=0;";
-	while ($row = $result->fetchRow()) {
-		$output .= PHP_EOL."DROP TABLE IF EXISTS `$row[0]`;";
-	}
-	$output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=1;".PHP_EOL;
-}
+$output .= '# Avoid possible foreign key constraint errors during restore';
+$output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=0;".PHP_EOL;
 
 
 /**
