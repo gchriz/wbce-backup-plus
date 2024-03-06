@@ -18,8 +18,9 @@ Configuration can be modified by editing the backup_settings.php file via FTP / 
 
 ### and some unofficial
 
-Links to *Backup Plus* in gchriz' Github repository:
+Links to *Backup Plus* in gchriz' Github repository right here:
 
-* [main entry](https://github.com/gchriz/wbce-backup-plus)
-* [latest release version (overview page with download links)](https://github.com/gchriz/wbce-backup-plus/releases/latest)
-* [current development version (.zip file)](https://github.com/gchriz/wbce-backup-plus/archive/refs/heads/main.zip)
+* [main entry page](https://github.com/gchriz/wbce-backup-plus)
+* [mirror of latest release version (overview page with download links)](https://github.com/gchriz/wbce-backup-plus/releases/latest)
+* [current head/development version (.zip file)](https://github.com/gchriz/wbce-backup-plus/archive/refs/heads/main.zip), most of the time identical to the release version
+* [active branch(es) with ongoing work, to be included into development version soon](https://github.com/gchriz/wbce-backup-plus/branches)
