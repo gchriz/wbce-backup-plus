@@ -56,6 +56,8 @@ $pfx = new BKU_FilePrefix($dir_path, $_GET['type']);
 $log = new BKU_Log($pfx->get());
 $log->write('Backup started - Version ' . $module_version);
 
+$log->write('WB_URL: ' . WB_URL);
+
 // Set the begin path depending on backup type
 switch ($_GET['type']) {
 	case 'full':
@@ -262,6 +264,9 @@ $output = ''.PHP_EOL.
 
 if ($dbVersion <> "")	$output .= '# Database: ' .$dbVersion.PHP_EOL;
 if ($dbOS <> "")	$output .= '# OS: '.$dbOS.PHP_EOL;
+$output .= '# WB_URL: '.WB_URL.PHP_EOL;
+$output .= '# DB_NAME: '.DB_NAME.PHP_EOL;
+$output .= '# TABLE_PREFIX: '.TABLE_PREFIX.PHP_EOL;
 $output .= '# '.PHP_EOL.PHP_EOL;
 
 $output .= '# Avoid possible foreign key constraint errors during restore';
