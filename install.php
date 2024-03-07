@@ -28,3 +28,9 @@ if (!file_exists($config_file)) {
 	copy($config_default_file, $config_file);
 }
 
+require_once($config_file);
+
+// Make directory for the backups if not yet existing
+$dir_path = WB_PATH.BACKUP_DATA_DIR;
+make_dir($dir_path);
+
