@@ -132,6 +132,22 @@ if ($sql === false) {
 
 $log->write( sprintf('Restoring SQL dump "%s" ...', $sqlfile));
 
+$sql_head = substr($sql, 0, 300);
+preg_match('/^# WB_URL:\s(.*)$/m', $sql_head, $umatches);
+$wb_url_src = $umatches[1];
+
+if ( $wb_url_src and ($wb_url_src !== WB_URL) ) {
+	$log->write( sprintf('From source WB_URL "%s" ...', $wb_url_src));
+	$log->write( sprintf('To  target  WB_URL "%s" ...', WB_URL));
+
+	$pattern = '!'.$wb_url_src.'/(\\S)!m';
+	$replacement = WB_URL . '/\\1';
+
+	$sql_new = preg_replace($pattern, $replacement , $sql);
+	//file_put_contents($sqlfile.'.new', $sql_new);
+	$sql = $sql_new;
+}
+
 // execute multi query
 $db = $database->__get('db_handle');
 
