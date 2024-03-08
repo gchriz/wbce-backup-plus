@@ -112,7 +112,7 @@ if ($res === false || $ERROR_UNZIP) {
 	$log->write( sprintf($MOD_BACKUP['BACKUP_ZIP_ERROR'], $res));
 	abort(array('code' => 4034, 'error' => sprintf($MOD_BACKUP['BACKUP_ZIP_ERROR'], $res)));
 } else {
-	$log->write( sprintf('Restore zipfile "%s" sucessfull', $zipfile));
+	$log->write( sprintf('Restore zipfile "%s" successful', $zipfile));
 }
 
 
@@ -200,6 +200,14 @@ function cleanDir($dir) {
 
 function abort($status) {
 	global $matches;
+	global $db;
+
+	//print("Be really sure to have foreign key check enabled again.");
+	$sql = "SET FOREIGN_KEY_CHECKS=1;";
+	if (!($db->query($sql))) {
+		// TODO Perhaps another number, but I don't know the rules for them
+		$status = array('code' => 4036, 'error' => $db->errno . " - " . print_r($db->error,true));
+	}
 
 	if (empty($status["error"])) {
 		$s = 'result=' . urlencode($status["message"]);
