@@ -62,6 +62,9 @@ function stop($msg) {
 	die(sprintf( $MOD_BACKUP['BACKUP_PARAMETER_ERROR'], $msg ));
 }
 
+// Make directory for the backups if not yet existing
+$dir_path = WB_PATH.BACKUP_DATA_DIR;
+make_dir($dir_path);
 
 /**
  *	Show form
