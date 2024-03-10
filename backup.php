@@ -104,7 +104,7 @@ if ($res !== true) {
 }
 
 $iterator = new RecursiveDirectoryIterator($source);
-// skip dot files while iterating
+// skip dot files (. and ..) while iterating
 $iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
 $files = new RecursiveIteratorIterator($iterator);
 

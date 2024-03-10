@@ -85,12 +85,7 @@ if ($matches[2] == 'f') {
 
 $log->write( sprintf('Extracting zipfile "%s" to "%s"...', $zipfile, $zip_dest));
 
-// Originally: All at once, without any intermediate detection of failures!
-//$zip->extractTo($zip_dest);
-// Even this doesn't help for detecting errors...
-//$log->write( sprintf('Status: %s', $zip->getStatusString()));
-
-// New: File by file as found in user comments here: https://www.php.net/manual/en/ziparchive.extractto.php
+// Extract file by file to detect intermediate errors!
 $ERROR_UNZIP = false;
 
 for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -100,7 +95,7 @@ for ($i = 0; $i < $zip->numFiles; $i++) {
 
 	if (! $RETVAL) {
 		$log->write( sprintf('ERROR on writing target file: %s', $filename) );
-		// but how to know details of failure?
+		// TODO: but how to know details of failure?
 		$ERROR_UNZIP = true;
 	}
 }
@@ -132,10 +127,12 @@ if ($sql === false) {
 
 $log->write( sprintf('Restoring SQL dump "%s" ...', $sqlfile));
 
+// get the source WB_URL from the SQL file's header comment
 $sql_head = substr($sql, 0, 300);
 preg_match('/^# WB_URL:\s(.*)$/m', $sql_head, $umatches);
 $wb_url_src = $umatches[1];
 
+// if source and target WB_URL are different: substitute to target for the import
 if ( $wb_url_src and ($wb_url_src !== WB_URL) ) {
 	$log->write( sprintf('From source WB_URL "%s" ...', $wb_url_src));
 	$log->write( sprintf('To  target  WB_URL "%s" ...', WB_URL));
@@ -144,6 +141,7 @@ if ( $wb_url_src and ($wb_url_src !== WB_URL) ) {
 	$replacement = WB_URL . '/\\1';
 
 	$sql_new = preg_replace($pattern, $replacement , $sql);
+    // write changed SQL file for testing/checking purpose
 	//file_put_contents($sqlfile.'.new', $sql_new);
 	$sql = $sql_new;
 }
@@ -151,20 +149,17 @@ if ( $wb_url_src and ($wb_url_src !== WB_URL) ) {
 // execute multi query
 $db = $database->__get('db_handle');
 
-// Possibly this might help too???:
-// mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
 if (!($db->multi_query($sql))) {
 	$log->write($db->errno . " - " . print_r($db->error,true));
 	abort(array('code' => 4036, 'error' => $db->errno . " - " . print_r($db->error,true)));
 }
 
+// and walk through all single queries of the multi_query synchronously to detect possible errors!
 do {
 	$db->next_result();
-    // This shows the internal steps within multi_query().
-    // Unfortunately without detailed data available.
+    // This shows the progress/internal steps within multi_query().
+    // Unfortunately without detailed data available...
     //$log->write('.');
-
 } while ($db->more_results());
 
 if ($db->error) {
@@ -182,7 +177,7 @@ abort(array('code' => 200, 'error' => '', 'message' => sprintf($MOD_BACKUP['BACK
 
 function cleanDir($dir) {
 	$iterator = new RecursiveDirectoryIterator($dir);
-	// skip dot files while iterating
+	// skip dot files (. and ..) while iterating
 	$iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
 	$files = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
 
@@ -202,10 +197,11 @@ function abort($status) {
 	global $matches;
 	global $db;
 
-	//print("Be really sure to have foreign key check enabled again.");
+	// Be really sure to have foreign key check enabled again
+	// after having it possibly disabled in the SQL file.
 	$sql = "SET FOREIGN_KEY_CHECKS=1;";
 	if (!($db->query($sql))) {
-		// TODO Perhaps another number, but I don't know the rules for them
+		// TODO Perhaps another code number, but I don't know the rules for them
 		$status = array('code' => 4036, 'error' => $db->errno . " - " . print_r($db->error,true));
 	}
 
