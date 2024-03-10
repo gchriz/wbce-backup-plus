@@ -132,18 +132,21 @@ $sql_head = substr($sql, 0, 300);
 preg_match('/^# WB_URL:\s(.*)$/m', $sql_head, $umatches);
 $wb_url_src = $umatches[1];
 
-// if source and target WB_URL are different: substitute to target for the import
-if ( $wb_url_src and ($wb_url_src !== WB_URL) ) {
-	$log->write( sprintf('From source WB_URL "%s" ...', $wb_url_src));
-	$log->write( sprintf('To  target  WB_URL "%s" ...', WB_URL));
+// if not "full" backup (TODO: does it make sense there, and would it work?)
+if ($matches[2] !== 'f') {
+	// if source and target WB_URL are different: substitute to target for the import
+	if ( $wb_url_src and ($wb_url_src !== WB_URL) ) {
+		$log->write( sprintf('From source WB_URL "%s" ...', $wb_url_src));
+		$log->write( sprintf('To  target  WB_URL "%s" ...', WB_URL));
 
-	$pattern = '!'.$wb_url_src.'/(\\S)!m';
-	$replacement = WB_URL . '/\\1';
+		$pattern = '!'.$wb_url_src.'/(\\S)!m';
+		$replacement = WB_URL . '/\\1';
 
-	$sql_new = preg_replace($pattern, $replacement , $sql);
-    // write changed SQL file for testing/checking purpose
-	//file_put_contents($sqlfile.'.new', $sql_new);
-	$sql = $sql_new;
+		$sql_new = preg_replace($pattern, $replacement , $sql);
+		// write changed SQL file for testing/checking purpose
+		//file_put_contents($sqlfile.'.new', $sql_new);
+		$sql = $sql_new;
+	}
 }
 
 // execute multi query
