@@ -26,7 +26,9 @@ $MOD_BACKUP['BACKUP_INFO']				=
       'Die Sicherung aller Verzeichnisse und Dateien kann je nach Umfang der installierten Module und Templates sowie der Anzahl Mediendateien lange dauern.'
     . '<br>Es werden nur Dateien bis max. %s MB ins Backup aufgenommen.'
     . '<br>Einige Verzeichnisse sind ausgenommen, siehe \'backup_settings.php\'.'
-    . '<br>Leere Verzeichnisse werden nicht gesichert. Verzeichnis-Links wird nicht gefolgt!';
+    . '<br>Leere Verzeichnisse werden nicht gesichert. Verzeichnis-Links wird nicht gefolgt.'
+    . '<br><br>Beim Wiederherstellen von Sicherungen der Typen "Seiten" und "CMS" werden in den Daten'
+    . ' automatisch alle Vorkommnisse von WB_URL auf die aktuelle CMS-Instanz angepasst.';
 
 $MOD_BACKUP['BACKUP_START'] 	  		= 'Ausgewählte Sicherung starten';
 

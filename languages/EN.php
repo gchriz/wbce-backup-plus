@@ -26,7 +26,9 @@ $MOD_BACKUP['BACKUP_INFO']				=
       'The backup of all directories and files may take a while. It depends on the number of modules and templates installed and the size of media files.'
     . '<br>Only files up to max. %s MB will be included in the backup.'
     . '<br>Some directories won\'t be included, have a look at \'backup_settings.php\'.'
-    . '<br>Empty directories won\'t be included. Links to directories won\'t be followed!';
+    . '<br>Empty directories won\'t be included. Links to directories won\'t be followed.'
+    . '<br><br>During a restore of backup types "Pages" and "CMS" all occurences of WB_URL'
+    . ' in the data will be automatically changed to the current CMS instance.';
 
 $MOD_BACKUP['BACKUP_START'] 	  		= 'Start selected backup';
 
