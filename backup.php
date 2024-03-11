@@ -56,6 +56,8 @@ $pfx = new BKU_FilePrefix($dir_path, $_GET['type']);
 $log = new BKU_Log($pfx->get());
 $log->write('Backup started - Version ' . $module_version);
 
+$log->write('WB_URL: ' . WB_URL);
+
 // Set the begin path depending on backup type
 switch ($_GET['type']) {
 	case 'full':
@@ -102,7 +104,7 @@ if ($res !== true) {
 }
 
 $iterator = new RecursiveDirectoryIterator($source);
-// skip dot files while iterating
+// skip dot files (. and ..) while iterating
 $iterator->setFlags(RecursiveDirectoryIterator::SKIP_DOTS);
 $files = new RecursiveIteratorIterator($iterator);
 
@@ -262,7 +264,14 @@ $output = ''.PHP_EOL.
 
 if ($dbVersion <> "")	$output .= '# Database: ' .$dbVersion.PHP_EOL;
 if ($dbOS <> "")	$output .= '# OS: '.$dbOS.PHP_EOL;
+$output .= '# WB_URL: '.WB_URL.PHP_EOL;
+$output .= '# DB_NAME: '.DB_NAME.PHP_EOL;
+$output .= '# TABLE_PREFIX: '.TABLE_PREFIX.PHP_EOL;
 $output .= '# '.PHP_EOL.PHP_EOL;
+
+$output .= '# Avoid possible foreign key constraint errors during restore';
+$output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=0;".PHP_EOL;
+
 
 /**
  *	Get table names
@@ -351,6 +360,9 @@ while ($row = $result->fetchRow()) {
 	}
 	$output .= $sql_backup.$sql_code.PHP_EOL.PHP_EOL;
 }
+
+$output .= '# Enable foreign key check again';
+$output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=1;".PHP_EOL;
 
 /**
  *	Write sql file

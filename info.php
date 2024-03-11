@@ -13,7 +13,7 @@
 $module_directory = 'backup_plus';
 $module_name = 'Backup Plus';
 $module_function = 'tool';
-$module_version = '2.8.1';
+$module_version = '2.8.2';
 $module_platform = '1.5.x';
 $module_author = 'misc., Ruud, webbird, freesbee, mastermind, chriz';
 $module_license = 'GNU General Public License';
@@ -47,6 +47,12 @@ $module_icon = 'fa fa-download';
  * 
  * 2.8.1    (by florian) PHP 8.1 deprecated fix 
  *			small fixes to DE.php
+ *
+ * 2.8.2    (by chriz) bugfix: restore now detects and shows possible SQL and unzip errors
+ *          add some technical details as background information to DE.php, EN.php and to restore logs
+ *          turn off foreign key check in SQL file during restore
+ *          change source to target WB_URL on restore, but only with "page" and "wbce" backups yet
+ *          create backups directory on install and every call of Backup Plus to have it existing for sure
  *
  */
 
