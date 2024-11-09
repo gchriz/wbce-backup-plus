@@ -285,6 +285,24 @@ if ($_GET['type'] == 'wbce') {
 	// get ONLY wbce tables
 	$prefix = str_replace('_', '\_', TABLE_PREFIX);
 	$query = "SHOW TABLES LIKE '".$prefix."%'";
+
+	// exclude the (optionally ignored) tables
+	$query2 = "SHOW TABLES where tables_in_" . DB_NAME . " like '".$prefix."%'";
+	foreach( $ignoreWbceTables as $tabpattern) {
+		$query2 .= " and tables_in_" . DB_NAME . " like '%" . $tabpattern . "%'";
+	}
+
+	$result = $database->query($query2);
+	if ($database->is_error()) {
+		die(json_encode(array('code' => 4039, 'error' => $database->get_error())));
+	}
+
+	$tables_to_ignore = array();
+	while ($row = $result->fetchRow()) {
+		$tables_to_ignore[] = $row[0];
+	}
+
+	$log->write('The contents of the following tables are not dumped into the SQL export: '.implode(", ",$tables_to_ignore));
 }
 
 if ($_GET['type'] == 'page') {
@@ -331,6 +349,12 @@ while ($row = $result->fetchRow()) {
 	$out = $query2->fetchRow();
 
 	$sql_backup .= $out['Create Table'].";".PHP_EOL.PHP_EOL;
+
+	if (in_array($row[0], $tables_to_ignore)) {
+		$output .= $sql_backup.PHP_EOL.PHP_EOL;
+		continue;
+	}
+
 	$sql_backup .= "# Dump data for ".$row[0].PHP_EOL;
 
 	/**
