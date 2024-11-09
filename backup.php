@@ -286,7 +286,7 @@ if ($_GET['type'] == 'wbce') {
 	$prefix = str_replace('_', '\_', TABLE_PREFIX);
 	$query = "SHOW TABLES LIKE '".$prefix."%'";
 
-	// exclude the (optionally ignored) tables
+	// identify the (optionally ignored) tables
 	$query2 = "SHOW TABLES where tables_in_" . DB_NAME . " like '".$prefix."%'";
 	foreach( $ignoreWbceTables as $tabpattern) {
 		$query2 .= " and tables_in_" . DB_NAME . " like '%" . $tabpattern . "%'";
