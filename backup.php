@@ -275,42 +275,50 @@ $output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=0;".PHP_EOL;
 
 /**
  *	Get table names
- *	Use this one for all tables in DB
- *
  */
+
+// Default: Save all tables with content.
+// Can optionally be configured differently for type "wbce" in config value $saveAsEmptyWbceTables
+$tables_to_save_without_content = array();
+
+// For type "full" and as basis for type "page"
 $query = "SHOW TABLES";
 
 if ($_GET['type'] == 'wbce') {
 
-	// get ONLY wbce tables
+	// get ONLY current wbce tables
 	$prefix = str_replace('_', '\_', TABLE_PREFIX);
 	$query = "SHOW TABLES LIKE '".$prefix."%'";
 
-	// identify the (optionally ignored) tables
-	$query2 = "SHOW TABLES where tables_in_" . DB_NAME . " like '".$prefix."%'";
-	foreach( $ignoreWbceTables as $tabpattern) {
-		$query2 .= " and tables_in_" . DB_NAME . " like '%" . $tabpattern . "%'";
+	// Get the optionally configured table patterns to identify tables that should be saved without contents.
+	// ==> array $tables_to_save_without_content
+	if (isset($saveAsEmptyWbceTables)) {
+
+		$query2 = "SHOW TABLES where tables_in_" . DB_NAME . " like '".$prefix."%'";
+		foreach( $saveAsEmptyWbceTables as $tabpattern) {
+			$query2 .= " and tables_in_" . DB_NAME . " like '%" . $tabpattern . "%'";
+		}
+
+		$result = $database->query($query2);
+		if ($database->is_error()) {
+			die(json_encode(array('code' => 4039, 'error' => $database->get_error())));
+		}
+
+		$tables_to_save_without_content = array();
+		while ($row = $result->fetchRow()) {
+			$tables_to_save_without_content[] = $row[0];
+		}
+
+		$log->write('The contents of the following tables are *not dumped* into the SQL export: '.implode(", ",$tables_to_save_without_content).PHP_EOL);
 	}
 
-	$result = $database->query($query2);
-	if ($database->is_error()) {
-		die(json_encode(array('code' => 4039, 'error' => $database->get_error())));
-	}
-
-	$tables_to_ignore = array();
-	while ($row = $result->fetchRow()) {
-		$tables_to_ignore[] = $row[0];
-	}
-
-	$log->write('The contents of the following tables are not dumped into the SQL export: '.implode(", ",$tables_to_ignore));
-}
-
-if ($_GET['type'] == 'page') {
+} elseif ($_GET['type'] == 'page') {
 
 	foreach( $exportTables as &$tab) {
 		$tab = TABLE_PREFIX.$tab;
 	}
-	$log->write('Only these tables are included in the SQL export: '.implode(", ",$exportTables));
+	$log->write('Only these tables are included in the SQL export: '.implode(", ",$exportTables).PHP_EOL);
+
 }
 
 $result = $database->query($query);
@@ -350,7 +358,7 @@ while ($row = $result->fetchRow()) {
 
 	$sql_backup .= $out['Create Table'].";".PHP_EOL.PHP_EOL;
 
-	if (in_array($row[0], $tables_to_ignore)) {
+	if (in_array($row[0], $tables_to_save_without_content)) {
 		$output .= $sql_backup.PHP_EOL.PHP_EOL;
 		continue;
 	}

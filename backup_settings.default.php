@@ -56,9 +56,8 @@ $exportTables = array('mod_wysiwyg','mod_menu_link','mod_sitemap','pages','secti
 $ignoreWbceDirs = array('backups', 'owncloud','nextcloud','logs','log','cgi-bin');
 
 // Specify (optionally part of) database table names you DO NOT WANT in the SQL export as an array.
-// (For example because the table is too big and would terminate the dump process.)
-$ignoreWbceTables = array('mod_wbstats');
-
+// (For example because these tables are too big and would terminate the dump process.)
+$saveAsEmptyWbceTables = array('mod_wbstats');
 
 // -------------------- Excludes for backup type FULL ----------------------------
 // Specify directories you do NOT want in the backup as an array for backup type "full"
