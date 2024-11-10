@@ -13,7 +13,7 @@
 $module_directory = 'backup_plus';
 $module_name = 'Backup Plus';
 $module_function = 'tool';
-$module_version = '2.8.2';
+$module_version = '2.8.3';
 $module_platform = '1.5.x';
 $module_author = 'misc., Ruud, webbird, freesbee, mastermind, chriz';
 $module_license = 'GNU General Public License';
@@ -53,6 +53,8 @@ $module_icon = 'fa fa-download';
  *          add some technical details as background information to DE.php, EN.php and to restore logs
  *          turn off foreign key check in SQL file during restore
  *          create backups directory on install and every call of Backup Plus to have it existing for sure
+ *
+ * 2.8.3    (by chriz) new config value saveAsEmptyWbceTables to exclude table contents from backup for given tables
  *
  */
 
