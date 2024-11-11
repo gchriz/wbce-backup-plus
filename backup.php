@@ -279,7 +279,7 @@ $output .= PHP_EOL."SET FOREIGN_KEY_CHECKS=0;".PHP_EOL;
 
 // Default: Save all tables with content.
 // Can optionally be configured differently for type "wbce" in config value $saveAsEmptyWbceTables
-$tables_to_save_without_content = array();
+$pattern_for_tables_without_content = "";
 
 // For type "full" and as basis for type "page"
 $query = "SHOW TABLES";
@@ -290,26 +290,10 @@ if ($_GET['type'] == 'wbce') {
 	$prefix = str_replace('_', '\_', TABLE_PREFIX);
 	$query = "SHOW TABLES LIKE '".$prefix."%'";
 
-	// Get the optionally configured table patterns to identify tables that should be saved without contents.
-	// ==> array $tables_to_save_without_content
-	if (isset($saveAsEmptyWbceTables)) {
-
-		$query2 = "SHOW TABLES where tables_in_" . DB_NAME . " like '".$prefix."%'";
-		foreach( $saveAsEmptyWbceTables as $tabpattern) {
-			$query2 .= " and tables_in_" . DB_NAME . " like '%" . $tabpattern . "%'";
-		}
-
-		$result = $database->query($query2);
-		if ($database->is_error()) {
-			die(json_encode(array('code' => 4039, 'error' => $database->get_error())));
-		}
-
-		$tables_to_save_without_content = array();
-		while ($row = $result->fetchRow()) {
-			$tables_to_save_without_content[] = $row[0];
-		}
-
-		$log->write('The contents of the following tables are *not dumped* into the SQL export: '.implode(", ",$tables_to_save_without_content).PHP_EOL);
+	// Build the optional regex pattern to identify tables that should be saved without contents
+	if (isset($saveAsEmptyWbceTables) && (count($saveAsEmptyWbceTables) > 0)) {
+		$pattern_for_tables_without_content = "/" . implode("|", $saveAsEmptyWbceTables) . "/i";
+		$log->write('Pattern for tables to save without content: "' . $pattern_for_tables_without_content . '"');
 	}
 
 } elseif ($_GET['type'] == 'page') {
@@ -358,9 +342,14 @@ while ($row = $result->fetchRow()) {
 
 	$sql_backup .= $out['Create Table'].";".PHP_EOL.PHP_EOL;
 
-	if (in_array($row[0], $tables_to_save_without_content)) {
-		$output .= $sql_backup.PHP_EOL.PHP_EOL;
-		continue;
+	if ($pattern_for_tables_without_content !== "") {
+		if (preg_match($pattern_for_tables_without_content, $row[0])) {
+			$msg = 'Contents are not dumped for: ' . $row[0];
+			$log->write($msg);
+			$output .= $sql_backup;
+			$output .= '# ' . $msg .PHP_EOL.PHP_EOL.PHP_EOL;
+			continue;
+		}
 	}
 
 	$sql_backup .= "# Dump data for ".$row[0].PHP_EOL;
